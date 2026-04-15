@@ -128,16 +128,16 @@ class TrafficEnv(gym.Env):
         }
 
     def _compute_reward(self, before, after, action):
-    delta_queue = after["queue"] - before["queue"]
-    delta_wait  = (after["wait"] - before["wait"]) / 200.0
+        delta_queue = after["queue"] - before["queue"]
+        delta_wait  = (after["wait"] - before["wait"]) / 200.0
 
-    switch_penalty = 0.2 if action == 1 else 0.0
+        switch_penalty = 0.2 if action == 1 else 0.0
 
-    return float(
-        - 0.6 * delta_queue
-        - 0.4 * delta_wait
-        - switch_penalty
-    )
+        return float(
+            -0.6 * delta_queue
+            -0.4 * delta_wait
+            -switch_penalty
+        )
 
     def _start_yellow_transition(self):
         try:
