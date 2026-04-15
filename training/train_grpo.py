@@ -35,7 +35,7 @@ def main():
     tls_ids      = cfg["sumo"]["tls_ids"]
     hidden_dim   = cfg["grpo"]["hidden_dim"]
     max_steps    = cfg["episode"]["max_decision_steps"]
-    num_episodes = 2000
+    num_episodes = 4000
     lr           = 1e-4
     gamma        = 0.99
     clip_eps     = 0.2
