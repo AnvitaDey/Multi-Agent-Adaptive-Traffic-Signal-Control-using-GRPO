@@ -1,0 +1,115 @@
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
+
+    <!-- ============================================================
+         HEAVY / PEAK TRAFFIC SCENARIO
+         ~2500 vehicles, period = 0.8s
+         Grid layout:
+           A2 ==- B2 ==- C2
+           |      |      |
+           A1 ==- B1 ==- C1
+           |      |      |
+           A0 ==- B0 ==- C0
+         ============================================================ -->
+
+    <vType id="car" accel="2.6" decel="4.5" sigma="0.5"
+           length="5.0" minGap="2.5" maxSpeed="13.89"
+           guiShape="passenger" color="1.0,0.4,0.4"/>
+
+    <!-- Horizontal West→East -->
+    <route id="r_A0_B0_C0" edges="A0B0 B0C0"/>
+    <route id="r_A1_B1_C1" edges="A1B1 B1C1"/>
+    <route id="r_A2_B2_C2" edges="A2B2 B2C2"/>
+
+    <!-- Horizontal East→West -->
+    <route id="r_C0_B0_A0" edges="C0B0 B0A0"/>
+    <route id="r_C1_B1_A1" edges="C1B1 B1A1"/>
+    <route id="r_C2_B2_A2" edges="C2B2 B2A2"/>
+
+    <!-- Vertical South→North -->
+    <route id="r_A0_A1_A2" edges="A0A1 A1A2"/>
+    <route id="r_B0_B1_B2" edges="B0B1 B1B2"/>
+    <route id="r_C0_C1_C2" edges="C0C1 C1C2"/>
+
+    <!-- Vertical North→South -->
+    <route id="r_A2_A1_A0" edges="A2A1 A1A0"/>
+    <route id="r_B2_B1_B0" edges="B2B1 B1B0"/>
+    <route id="r_C2_C1_C0" edges="C2C1 C1C0"/>
+
+    <!-- Partial / turning routes -->
+    <route id="r_A0_B0"    edges="A0B0"/>
+    <route id="r_A0_A1"    edges="A0A1"/>
+    <route id="r_C2_B2"    edges="C2B2"/>
+    <route id="r_C2_C1"    edges="C2C1"/>
+    <route id="r_A1_B1"    edges="A1B1"/>
+    <route id="r_B1_B2"    edges="B1B2"/>
+    <route id="r_B0_C0"    edges="B0C0"/>
+    <route id="r_B2_A2"    edges="B2A2"/>
+    <route id="r_A2_B2"    edges="A2B2"/>
+    <route id="r_C0_B0"    edges="C0B0"/>
+
+    <!-- ============================================================
+         FLOWS — Heavy density (period ~3-4s baseline + peak burst)
+         ============================================================ -->
+
+    <!-- West→East baseline -->
+    <flow id="fl_A0_C0_base" type="car" route="r_A0_B0_C0"
+          begin="0"    end="3600" period="3" departLane="best" departSpeed="max"/>
+    <flow id="fl_A1_C1_base" type="car" route="r_A1_B1_C1"
+          begin="0"    end="3600" period="3" departLane="best" departSpeed="max"/>
+    <flow id="fl_A2_C2_base" type="car" route="r_A2_B2_C2"
+          begin="0"    end="3600" period="3" departLane="best" departSpeed="max"/>
+
+    <!-- East→West baseline -->
+    <flow id="fl_C0_A0_base" type="car" route="r_C0_B0_A0"
+          begin="0"    end="3600" period="3" departLane="best" departSpeed="max"/>
+    <flow id="fl_C1_A1_base" type="car" route="r_C1_B1_A1"
+          begin="1"    end="3600" period="3" departLane="best" departSpeed="max"/>
+    <flow id="fl_C2_A2_base" type="car" route="r_C2_B2_A2"
+          begin="2"    end="3600" period="3" departLane="best" departSpeed="max"/>
+
+    <!-- South→North baseline -->
+    <flow id="fl_A0_A2_base" type="car" route="r_A0_A1_A2"
+          begin="0"    end="3600" period="4" departLane="best" departSpeed="max"/>
+    <flow id="fl_B0_B2_base" type="car" route="r_B0_B1_B2"
+          begin="1"    end="3600" period="4" departLane="best" departSpeed="max"/>
+    <flow id="fl_C0_C2_base" type="car" route="r_C0_C1_C2"
+          begin="2"    end="3600" period="4" departLane="best" departSpeed="max"/>
+
+    <!-- North→South baseline -->
+    <flow id="fl_A2_A0_base" type="car" route="r_A2_A1_A0"
+          begin="0"    end="3600" period="4" departLane="best" departSpeed="max"/>
+    <flow id="fl_B2_B0_base" type="car" route="r_B2_B1_B0"
+          begin="1"    end="3600" period="4" departLane="best" departSpeed="max"/>
+    <flow id="fl_C2_C0_base" type="car" route="r_C2_C1_C0"
+          begin="2"    end="3600" period="4" departLane="best" departSpeed="max"/>
+
+    <!-- Peak burst flows (rush hour: 1200–2400s) -->
+    <flow id="fl_A0_C0_peak" type="car" route="r_A0_B0_C0"
+          begin="1200" end="2400" period="2" departLane="best" departSpeed="max"/>
+    <flow id="fl_A1_C1_peak" type="car" route="r_A1_B1_C1"
+          begin="1200" end="2400" period="2" departLane="best" departSpeed="max"/>
+    <flow id="fl_C0_A0_peak" type="car" route="r_C0_B0_A0"
+          begin="1200" end="2400" period="2" departLane="best" departSpeed="max"/>
+    <flow id="fl_B0_B2_peak" type="car" route="r_B0_B1_B2"
+          begin="1200" end="2400" period="2" departLane="best" departSpeed="max"/>
+    <flow id="fl_B2_B0_peak" type="car" route="r_B2_B1_B0"
+          begin="1200" end="2400" period="2" departLane="best" departSpeed="max"/>
+
+    <!-- Short / turning flows -->
+    <flow id="fl_A0_B0" type="car" route="r_A0_B0"
+          begin="0"    end="3600" period="8"  departLane="best" departSpeed="max"/>
+    <flow id="fl_C2_B2" type="car" route="r_C2_B2"
+          begin="2"    end="3600" period="8"  departLane="best" departSpeed="max"/>
+    <flow id="fl_A1_B1" type="car" route="r_A1_B1"
+          begin="4"    end="3600" period="8"  departLane="best" departSpeed="max"/>
+    <flow id="fl_B0_C0" type="car" route="r_B0_C0"
+          begin="6"    end="3600" period="10" departLane="best" departSpeed="max"/>
+    <flow id="fl_B2_A2" type="car" route="r_B2_A2"
+          begin="8"    end="3600" period="10" departLane="best" departSpeed="max"/>
+    <flow id="fl_A2_B2" type="car" route="r_A2_B2"
+          begin="10"   end="3600" period="10" departLane="best" departSpeed="max"/>
+    <flow id="fl_C0_B0" type="car" route="r_C0_B0"
+          begin="12"   end="3600" period="10" departLane="best" departSpeed="max"/>
+
+</routes>

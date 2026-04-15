@@ -1,0 +1,97 @@
+# ============================================================
+# Experiment Configuration — Multi-Agent Traffic Signal Control
+# ============================================================
+
+# ── SUMO Simulation ─────────────────────────────────────────
+sumo:
+  base_cfg: "config/sumo/simulation.sumocfg"
+  network:  "config/sumo/network.net.xml"
+  use_gui:  false
+  time_to_teleport: 300       # seconds before SUMO teleports a stuck vehicle
+
+  # Route files per traffic density
+  routes:
+    light:    "config/sumo/routes_light.rou.xml"
+    moderate: "config/sumo/routes_moderate.rou.xml"
+    heavy:    "config/sumo/routes_heavy.rou.xml"
+
+  # Traffic light IDs in the 3x3 grid network
+  tls_ids:
+    - "A0"
+    - "A1"
+    - "A2"
+    - "B0"
+    - "B1"
+    - "B2"
+    - "C0"
+    - "C1"
+    - "C2"
+
+  # Single intersection used for Stage 2 (PPO single-agent)
+  controlled_tls: "B1"   # centre intersection
+
+# ── Episode Parameters ───────────────────────────────────────
+episode:
+  max_decision_steps: 2000    # RL decision steps per episode
+  steps_per_decision: 10      # SUMO steps per decision
+  min_green_steps:    10      # minimum steps before a phase switch is allowed
+  yellow_steps:       2       # decision steps for yellow transition
+
+# ── Fixed-Time Baseline ──────────────────────────────────────
+fixed_time:
+  green_time:  30             # seconds per green phase
+  yellow_time:  3             # seconds per yellow phase
+
+# ── PPO Hyperparameters (Stage 2) ────────────────────────────
+ppo:
+  total_timesteps: 500_000
+  n_steps:         2048
+  batch_size:      64
+  n_epochs:        10
+  learning_rate:   3.0e-4
+  gamma:           0.99
+  gae_lambda:      0.95
+  clip_range:      0.2
+  ent_coef:        0.01
+  vf_coef:         0.5
+  max_grad_norm:   0.5
+  hidden_dim:      128
+  log_dir:         "results/ppo"
+  checkpoint_every: 50_000    # timesteps
+
+# ── GRPO Hyperparameters (Stage 3) ───────────────────────────
+grpo:
+  num_episodes:    500
+  learning_rate:   3.0e-4
+  gamma:           0.99
+  clip_eps:        0.2
+  entropy_coef:    0.01
+  hidden_dim:      128
+  log_dir:         "results/grpo"
+  checkpoint_every: 50        # episodes
+
+# ── Reward Weights ───────────────────────────────────────────
+reward:
+  w_queue:      0.4
+  w_wait:       0.3
+  w_throughput: 0.2
+  w_teleport:   0.1
+  teleport_penalty: 5.0       # multiplier applied to teleport count
+  queue_norm:   20.0          # normalisation divisor for queue length
+  wait_norm:    200.0         # normalisation divisor for waiting time (seconds)
+
+# ── Evaluation ───────────────────────────────────────────────
+evaluation:
+  densities:
+    - light
+    - moderate
+    - heavy
+  episodes_per_density: 5     # evaluation runs to average over
+  output_dir: "results"
+  comparison_csv: "results/comparison.csv"
+
+# ── Logging ──────────────────────────────────────────────────
+logging:
+  console_every: 10           # print progress every N episodes
+  csv_enabled:   true
+  tensorboard:   false

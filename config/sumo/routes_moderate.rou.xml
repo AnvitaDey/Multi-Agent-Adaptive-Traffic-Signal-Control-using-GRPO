@@ -1,0 +1,37 @@
+<routes>
+    <vType id="car" accel="2.6" decel="4.5" sigma="0.5" length="5.0" minGap="2.5" maxSpeed="13.89" guiShape="passenger" color="0.6,0.6,1.0"/>
+    <route id="r_A0_B0_C0" edges="A0B0 B0C0"/>
+    <route id="r_A1_B1_C1" edges="A1B1 B1C1"/>
+    <route id="r_A2_B2_C2" edges="A2B2 B2C2"/>
+    <route id="r_C0_B0_A0" edges="C0B0 B0A0"/>
+    <route id="r_C1_B1_A1" edges="C1B1 B1A1"/>
+    <route id="r_C2_B2_A2" edges="C2B2 B2A2"/>
+    <route id="r_A0_A1_A2" edges="A0A1 A1A2"/>
+    <route id="r_B0_B1_B2" edges="B0B1 B1B2"/>
+    <route id="r_C0_C1_C2" edges="C0C1 C1C2"/>
+    <route id="r_A2_A1_A0" edges="A2A1 A1A0"/>
+    <route id="r_B2_B1_B0" edges="B2B1 B1B0"/>
+    <route id="r_C2_C1_C0" edges="C2C1 C1C0"/>
+    <route id="r_A0_B0" edges="A0B0"/>
+    <route id="r_C2_B2" edges="C2B2"/>
+    <route id="r_A1_B1" edges="A1B1"/>
+    <route id="r_B0_C0" edges="B0C0"/>
+    <route id="r_B2_A2" edges="B2A2"/>
+    <flow id="fl_A0_C0" type="car" route="r_A0_B0_C0" begin="0" end="3600" period="6" departLane="best" departSpeed="max"/>
+    <flow id="fl_A1_C1" type="car" route="r_A1_B1_C1" begin="1" end="3600" period="6" departLane="best" departSpeed="max"/>
+    <flow id="fl_A2_C2" type="car" route="r_A2_B2_C2" begin="2" end="3600" period="6" departLane="best" departSpeed="max"/>
+    <flow id="fl_C0_A0" type="car" route="r_C0_B0_A0" begin="0" end="3600" period="7" departLane="best" departSpeed="max"/>
+    <flow id="fl_C1_A1" type="car" route="r_C1_B1_A1" begin="1" end="3600" period="7" departLane="best" departSpeed="max"/>
+    <flow id="fl_C2_A2" type="car" route="r_C2_B2_A2" begin="2" end="3600" period="7" departLane="best" departSpeed="max"/>
+    <flow id="fl_A0_A2" type="car" route="r_A0_A1_A2" begin="0" end="3600" period="8" departLane="best" departSpeed="max"/>
+    <flow id="fl_B0_B2" type="car" route="r_B0_B1_B2" begin="1" end="3600" period="8" departLane="best" departSpeed="max"/>
+    <flow id="fl_C0_C2" type="car" route="r_C0_C1_C2" begin="2" end="3600" period="8" departLane="best" departSpeed="max"/>
+    <flow id="fl_A2_A0" type="car" route="r_A2_A1_A0" begin="0" end="3600" period="9" departLane="best" departSpeed="max"/>
+    <flow id="fl_B2_B0" type="car" route="r_B2_B1_B0" begin="1" end="3600" period="9" departLane="best" departSpeed="max"/>
+    <flow id="fl_C2_C0" type="car" route="r_C2_C1_C0" begin="2" end="3600" period="9" departLane="best" departSpeed="max"/>
+    <flow id="fl_A0_B0" type="car" route="r_A0_B0" begin="0" end="3600" period="15" departLane="best" departSpeed="max"/>
+    <flow id="fl_C2_B2" type="car" route="r_C2_B2" begin="3" end="3600" period="15" departLane="best" departSpeed="max"/>
+    <flow id="fl_A1_B1" type="car" route="r_A1_B1" begin="5" end="3600" period="15" departLane="best" departSpeed="max"/>
+    <flow id="fl_B0_C0" type="car" route="r_B0_C0" begin="7" end="3600" period="18" departLane="best" departSpeed="max"/>
+    <flow id="fl_B2_A2" type="car" route="r_B2_A2" begin="9" end="3600" period="18" departLane="best" departSpeed="max"/>
+</routes>

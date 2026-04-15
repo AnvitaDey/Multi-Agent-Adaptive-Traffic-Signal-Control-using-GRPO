@@ -1,0 +1,10 @@
+<configuration>
+    <input>
+        <net-file value="/home/anvita/Desktop/traffic_rl/config/sumo/network.net.xml" />
+        <route-files value="/home/anvita/Desktop/traffic_rl/config/sumo/routes_heavy.rou.xml" />
+    </input>
+    <time>
+        <begin value="0" />
+        <end value="3600" />
+    </time>
+</configuration>
