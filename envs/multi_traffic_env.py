@@ -128,10 +128,20 @@ class MultiTrafficEnv:
             if not self._in_yellow[tls]:
                 self._phase_timer[tls] += 1
 
-        rewards = {
-            tls: self._local_reward(metrics_before[tls], metrics_after[tls])
-            for tls in self.tls_ids
-        }
+        # 🔥 NEW GLOBAL COMPONENT
+        global_queue = sum(v["queue"] for v in metrics_after.values())
+
+        rewards = {}
+        for tls in self.tls_ids:
+            local = self._local_reward(
+                metrics_before[tls],
+                metrics_after[tls],
+                action_dict[tls]
+            )
+
+            global_reward = -0.1 * global_queue
+
+            rewards[tls] = local + global_reward
 
         sim_done     = traci.simulation.getMinExpectedNumber() == 0
         episode_done = sim_done or (self._step_count >= self.max_steps)
@@ -179,10 +189,17 @@ class MultiTrafficEnv:
             "wait":  sum(traci.lane.getWaitingTime(l)           for l in lanes),
         }
 
-    def _local_reward(self, before, after):
+    def _local_reward(self, before, after, action):
         delta_queue = after["queue"] - before["queue"]
         delta_wait  = (after["wait"] - before["wait"]) / 200.0
-        return float(- 0.5 * delta_queue - 0.5 * delta_wait)
+
+        switch_penalty = 0.2 if action == 1 else 0.0
+
+        return float(
+            - 0.6 * delta_queue
+            - 0.4 * delta_wait
+            - switch_penalty
+        )
 
     def _start_yellow(self, tls):
         try:
