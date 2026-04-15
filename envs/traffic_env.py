@@ -91,7 +91,7 @@ class TrafficEnv(gym.Env):
             self._fixed_ctrl.step(int(traci.simulation.getTime()))
             self._advance_yellow_if_needed()
         metrics_after  = self._snapshot_metrics()
-        reward         = self._compute_reward(metrics_before, metrics_after)
+        reward = self._compute_reward(metrics_before, metrics_after, action)
         self._step_count  += 1
         self._phase_timer += 1
         terminated = traci.simulation.getMinExpectedNumber() == 0
@@ -127,13 +127,17 @@ class TrafficEnv(gym.Env):
             "teleports": traci.simulation.getStartingTeleportNumber(),
         }
 
-    def _compute_reward(self, before, after):
-        return float(
-            - 0.4 * (after["queue"] - before["queue"])
-            - 0.3 * (after["wait"]  - before["wait"]) / 200.0
-            + 0.2 * after["arrived"]
-            - 0.5 * after["teleports"]
-        )
+    def _compute_reward(self, before, after, action):
+    delta_queue = after["queue"] - before["queue"]
+    delta_wait  = (after["wait"] - before["wait"]) / 200.0
+
+    switch_penalty = 0.2 if action == 1 else 0.0
+
+    return float(
+        - 0.6 * delta_queue
+        - 0.4 * delta_wait
+        - switch_penalty
+    )
 
     def _start_yellow_transition(self):
         try:
