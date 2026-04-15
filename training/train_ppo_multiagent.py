@@ -68,8 +68,8 @@ def main():
     hidden_dim = cfg["ppo"]["hidden_dim"]
     log_dir    = "results/ppo_multiagent"
     final_dir  = os.path.join(log_dir, "final")
-    total_ts   = 500_000
-    ckpt_every = 100_000
+    total_ts   = 1_000_000
+    ckpt_every = 200_000
 
     os.makedirs(log_dir,   exist_ok=True)
     os.makedirs(final_dir, exist_ok=True)
