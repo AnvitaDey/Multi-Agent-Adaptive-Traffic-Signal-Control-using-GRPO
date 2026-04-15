@@ -141,7 +141,7 @@ class MultiTrafficEnv:
             tls: self._snap_local(tls) for tls in self.tls_ids
         }
 
-        # 🔥 GLOBAL SIGNAL
+        # GLOBAL SIGNAL
         global_queue = sum(v["queue"] for v in metrics_after.values())
 
         global_arrived   = traci.simulation.getArrivedNumber()
@@ -153,7 +153,7 @@ class MultiTrafficEnv:
             if not self._in_yellow[tls]:
                 self._phase_timer[tls] += 1
 
-        # 🔥 FINAL REWARD (LOCAL + GLOBAL)
+        # FINAL REWARD
         rewards = {}
         for tls in self.tls_ids:
             local = self._local_reward(
@@ -257,6 +257,10 @@ class MultiTrafficEnv:
             except Exception:
                 pass
             self._sumo_running = False
+
+    # 🔥 REQUIRED FIX (IMPORTANT)
+    def obs_dim(self, tls):
+        return self._obs_dims.get(tls, 10)
 
     @staticmethod
     def _dedup(lanes):
