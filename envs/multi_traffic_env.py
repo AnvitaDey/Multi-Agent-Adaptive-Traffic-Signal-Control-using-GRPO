@@ -162,7 +162,7 @@ class MultiTrafficEnv:
                 action_dict[tls]
             )
 
-            global_reward = -0.1 * global_queue
+            global_reward = -0.2 * global_queue
             rewards[tls] = local + global_reward
 
         # Done condition
