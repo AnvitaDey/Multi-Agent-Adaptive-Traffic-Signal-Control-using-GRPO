@@ -110,8 +110,8 @@ class GRPOUpdater:
         # Group-relative advantage per timestep
         mu_t    = step_returns.mean(axis=0, keepdims=True)
         sigma_t = step_returns.std(axis=0,  keepdims=True) + 1e-8
-        adv_matrix = (step_returns - mu_t) / sigma_t  # (n_agents, T)
-
+        adv_matrix = (step_returns - mu_t) / (sigma_t + 1e-8)  # (n_agents, T)
+        adv_matrix = torch.clamp(adv_matrix, -5, 5)
         losses = []
 
         for i, (agent, rollout) in enumerate(zip(self.agents, rollouts)):
