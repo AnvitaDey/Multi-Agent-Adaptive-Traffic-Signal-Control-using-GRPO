@@ -64,6 +64,28 @@ def main():
         agents[tls]     = TrafficPolicyNet(obs_dim=obs_dim, num_actions=2, hidden=hidden_dim)
         optimizers[tls] = torch.optim.Adam(agents[tls].parameters(), lr=lr)
         print(f"  Agent {tls}: obs_dim={obs_dim}")
+    
+    # 🔁 RESUME LOGIC
+    start_ep = 0
+
+    ckpts = sorted([
+        d for d in os.listdir(log_dir)
+        if d.startswith("checkpoint_ep")
+    ])
+
+    if ckpts:
+        latest = ckpts[-1]
+        ckpt_path = os.path.join(log_dir, latest, "checkpoint.pt")
+
+        print(f"🔁 Resuming from {latest}")
+
+        checkpoint = torch.load(ckpt_path)
+
+        start_ep = checkpoint["episode"] + 1
+
+        for tls in tls_list:
+            agents[tls].load_state_dict(checkpoint["agents"][tls])
+            optimizers[tls].load_state_dict(checkpoint["optimizers"][tls])
 
     updater = GRPOUpdater(
         agents=[agents[t] for t in tls_list],
@@ -79,7 +101,7 @@ def main():
 
     print("\nStarting mixed-density GRPO training...\n")
 
-    for ep in tqdm(range(num_episodes), desc="GRPO", unit="ep", colour="green"):
+    for ep in tqdm(range(start_ep, um_episodes), desc="GRPO", unit="ep", colour="green"):
         obs_dict  = env.reset()
         # Track which density was used this episode
         current_density = ["light","moderate","heavy"][
@@ -126,11 +148,16 @@ def main():
                                      f"{mean_queue:.4f}", f"{mean_wait:.4f}",
                                      ep_throughput, f"{stats['mean_loss']:.6f}"])
 
-        if ep % ckpt_every == 0:
+        if ep>0 and ep % ckpt_every == 0:
             ckpt_dir = os.path.join(log_dir, f"checkpoint_ep{ep}")
             os.makedirs(ckpt_dir, exist_ok=True)
-            for tls in tls_list:
-                torch.save(agents[tls].state_dict(), os.path.join(ckpt_dir, f"{tls}.pt"))
+            
+            checkpoint = {
+                "episode": ep,
+                "agents": {tls: agents[tls].state_dict() for tls in tls_list},
+                "optimizers": {tls: optimizers[tls].state_dict() for tls in tls_list},
+            }
+            torch.save(checkpoint, os.path.join(ckpt_dir, "checkpoint.pt"))
             print(f"  --> Checkpoint: {ckpt_dir}")
 
     final_dir = os.path.join(log_dir, "final")
