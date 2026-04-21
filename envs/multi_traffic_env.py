@@ -197,7 +197,7 @@ class MultiTrafficEnv:
 
         switch_penalty = 0.2 if action == 1 else 0.0
 
-        throughput_bonus = after["arrived"] / 50.0
+        throughput_bonus = after.get("arrived", 0) / 50.0
 
         return float(
             -0.5 * delta_queue
