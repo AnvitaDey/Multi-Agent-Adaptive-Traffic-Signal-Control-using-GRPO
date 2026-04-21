@@ -175,6 +175,10 @@ class GRPOUpdater:
         all_step_returns = [r.compute_discounted_returns(self.gamma) for r in rollouts]
         min_len          = min(len(r) for r in all_step_returns)
         step_returns     = np.array([r[:min_len] for r in all_step_returns])  # (N, T)
+        
+        ret_mean = step_returns.mean()
+        ret_std  = step_returns.std() + 1e-8
+        step_returns = (step_returns - ret_mean) / ret_std
 
         # ── Optional value baseline subtraction ───────────────────
         if self.use_baseline:

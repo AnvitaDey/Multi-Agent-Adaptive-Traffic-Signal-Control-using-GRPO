@@ -66,19 +66,34 @@ class SingleAgentWrapper(gym.Env):
 
     def reset(self, *, seed=None, options=None):
         obs_dict = self._env.reset()
-        return obs_dict[self.tls_id], {}
 
+        # 🔥 ADD THESE
+        self._episode_reward = 0
+        self._episode_length = 0
+
+        return obs_dict[self.tls_id], {}
+    
     def step(self, action):
         action_dict = {tls: 0 for tls in self.all_tls_ids}
         action_dict[self.tls_id] = int(action)
+
         obs_dict, rew_dict, done_dict, info_dict = self._env.step(action_dict)
-        return (
-            obs_dict[self.tls_id],
-            rew_dict[self.tls_id],
-            done_dict["__all__"],
-            False,
-            info_dict[self.tls_id]
-        )
+
+        rew = rew_dict[self.tls_id]
+        done = done_dict["__all__"]
+        info = info_dict[self.tls_id]
+
+    # 🔥 ADD THIS
+        self._episode_reward += rew
+        self._episode_length += 1
+
+        if done:
+            info["episode"] = {
+                "r": self._episode_reward,
+                "l": self._episode_length
+            }
+
+        return obs_dict[self.tls_id], rew, done, False, info
 
     def close(self):
         self._env.close()

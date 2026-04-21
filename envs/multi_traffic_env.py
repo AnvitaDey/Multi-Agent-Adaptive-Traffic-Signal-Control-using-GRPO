@@ -197,10 +197,13 @@ class MultiTrafficEnv:
 
         switch_penalty = 0.2 if action == 1 else 0.0
 
+        throughput_bonus = after["arrived"] / 50.0
+
         return float(
-            -0.6 * delta_queue
-            -0.4 * delta_wait
-            -switch_penalty
+            -0.5 * delta_queue
+            -0.3 * delta_wait
+            +0.2 * throughput_bonus
+            - switch_penalty
         )
 
     def _get_obs(self, tls):
