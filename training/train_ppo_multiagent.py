@@ -215,6 +215,7 @@ def main():
                 max_grad_norm=0.5,
                 policy_kwargs=dict(net_arch=[256, hidden_dim]),
                 verbose=1,
+                tensorboard_log="results/ppo_multiagent/tb_logs",
             )
 
             remaining = total_ts
@@ -237,6 +238,7 @@ def main():
                 callback=[ckpt_cb],
                 progress_bar=True,
                 reset_num_timesteps=False,   # ← CRITICAL for correct resume
+                tb_log_name=f"PPO_{tls}" 
             )
         else:
             print("  ✅ Already at target timesteps — skipping learn()")
