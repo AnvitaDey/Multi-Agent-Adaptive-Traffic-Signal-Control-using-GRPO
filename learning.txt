@@ -6,4 +6,24 @@ A FILE WHERE I PUT WHAT I AM LEARNING ABOUT PPO AND GRPO BECAAUSE NOBODY HAS USE
  AND I CANNOT HV A GOOD GRPO WITHOUT A GOOD PPO
  so please ignore this text file, as this is only for personal documentation...
 
- 
+ Parameters in PPO
+
+Here are the main parameters in PPO:
+
+    Clip Range (ε): Controls how much the new policy can deviate from the old one ensuring stable updates.
+    Learning Rate: Step size for updating network weights during training.
+    Discount Factor (γ): Determines how much future rewards are valued compared to immediate rewards.
+    GAE Lambda (λ): Balances bias and variance in advantage estimation using Generalized Advantage Estimation.
+    Number of Epochs: How many times each batch of data is used for policy updates.
+    Batch Size: Number of samples per update affecting stability and efficiency.
+    Value Loss Coefficient (c1): Weight given to the critic loss in the total objective.
+    Entropy Coefficient (c2): Encourages exploration by penalizing low entropy i.e. overconfident policies.
+
+    now the que is, HOW DO I STABALIZE IT, actually no, i first need it to give me positive rewards, an upward graph, then i need to fix the convergance
+    and make it smoother with less occilation... how do i do that, i need to fig out tbh 
+
+    Agent: The decision-maker that performs actions.
+Environment: The world or system in which the agent operates.
+State: The situation or condition the agent is currently in.
+Action: The possible moves or decisions the agent can make.
+Reward: The feedback or result from the environment based on the agent’s action.
