@@ -1,0 +1,11 @@
+numpy
+pandas
+gymnasium
+stable-baselines3[extra]
+torch
+pyyaml
+tqdm
+tensorboard
+matplotlib
+traci
+sumolib
