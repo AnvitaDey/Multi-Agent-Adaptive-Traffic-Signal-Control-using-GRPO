@@ -212,7 +212,7 @@ class MultiTrafficEnv:
            fixed  -0.1  → small constant
 
         Total range: roughly [-6, +4] per step
-        Episode total (2000 steps): roughly [-12000, +8000]
+        Episode total (500 steps): roughly [-12000, +8000]
         """
         delta_queue = after["queue"] - before["queue"]
         delta_wait  = (after["wait"]  - before["wait"]) / 200.0

@@ -166,7 +166,7 @@ def main():
     # lr=3e-4 with linear decay → starts aggressive, ends conservative
     # ent_coef=0.05 → strong early exploration, decays naturally via schedule
     # batch_size=256 → larger mini-batches → smoother gradient updates
-    total_ts   = 1_000_000
+    total_ts   = 500_000
     ckpt_every = 100_000   # checkpoint every 100k steps
 
     os.makedirs(log_dir,   exist_ok=True)
