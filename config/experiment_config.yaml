@@ -32,7 +32,7 @@ sumo:
 
 # ── Episode Parameters ───────────────────────────────────────
 episode:
-  max_decision_steps: 500    # RL decision steps per episode
+  max_decision_steps: 1000    # RL decision steps per episode
   steps_per_decision: 10     # SUMO steps per decision
   min_green_steps:    10      # minimum steps before a phase switch is allowed
   yellow_steps:       2       # decision steps for yellow transition

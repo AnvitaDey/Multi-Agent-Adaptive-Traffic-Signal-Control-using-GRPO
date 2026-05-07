@@ -1,6 +1,6 @@
 A FILE WHERE I PUT WHAT I AM LEARNING ABOUT PPO AND GRPO BECAAUSE NOBODY HAS USED GRPO FRO STUFF LIKE THIS SO AI ISNT ABLE TO CODE FOR ME
  AND AFTER 2 MONTHS AND IDK LIKE 7 TRAININGS MY MODEL IS STILL NOT WORKING AND IM ON THE EDGE OF KILLING MYSELF 
- I KNOW NORMAL SUPERVISED AND UNSUPERVISED LEARNING WHO KNEW THIS SHI WAS LIKE 10X HARDER, WHAT IS 1 M EP PER AGENT AND IT'S AVG NO. OF AP IM GONNA KMS 
+ I KNOW NORMAL SUPERVISED AND UNSUPERVISED LEARNING WHO KNEW THIS SHI WAS LIKE 10X HARDER,  1 M EP PER AGENT ... AND IT'S AVG NO. OF ep IM GONNA KMS 
  I HV READ MY CODES SO MANY TIMES THAT I HV STARTED TO IDENTIFY FUNCTIONS AND KNOW WHERE TO FIND WT FUNCTION OR VARIABLE AAHHHHHHH
  anyway, a txt file of me putting stuff im learning from the internet, because MY PPO IS REFUSING TO STABALIZE AND CONVERGE AND THE REWARDS R PISSING ME OOFFF AAHHHHHH
  AND I CANNOT HV A GOOD GRPO WITHOUT A GOOD PPO
@@ -27,3 +27,28 @@ Environment: The world or system in which the agent operates.
 State: The situation or condition the agent is currently in.
 Action: The possible moves or decisions the agent can make.
 Reward: The feedback or result from the environment based on the agent’s action.
+
+so i changed my learning rate, and coeff, and checking if my rewards are too big... IDK WHY ITS TOO BIG CUZ ITS NOT, IT HAS TO BE BETTER THAN FIXED... 
+anyway, may my damn ppo work this time or ill crash out ... cuz if my ppo works, i can make my grpo work (crying emogi) 
+this project will get rid of my mental health fr ... WHY DIDNT I CHOOSE SMTHG EASIER AAHHHHHHHHHH
+
+Your progress summary
+What you've built so far:
+
+Full 3×3 grid SUMO environment with 9 traffic lights
+Mixed-density training (light/moderate/heavy randomly each episode)
+Multi-agent PPO infrastructure with resume/checkpoint support
+GRPO custom implementation with value baseline, cosine LR decay, group-relative advantages, 6000 episodes completed
+GRPO showed real improvement: queue −7%, wait −12% over training
+
+Where you are now:
+
+PPO training was broken due to catastrophic global reward term and near-zero entropy — agent couldn't learn
+GRPO is working but throughput was flat due to a bug (arrived never passed to reward)
+Both are now fixed in the code above
+
+Next after PPO converges:
+
+Apply the same reward fixes to your GRPO training (same env, so env fix covers both)
+Run evaluation comparing PPO vs GRPO on same test scenarios
+That comparison is your final result
