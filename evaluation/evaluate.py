@@ -14,8 +14,12 @@ CONFIGS = {
     "moderate": "config/sumo/routes_moderate.rou.xml",
     "heavy":    "config/sumo/routes_heavy.rou.xml",
 }
-
-TLS_IDS = [f"J{i}" for i in range(9)]  # 3x3 grid → 9 intersections
+ # 3x3 grid → 9 intersections
+TLS_IDS = [
+    "A0","A1","A2",
+    "B0","B1","B2",
+    "C0","C1","C2"
+]
 SUMO_BASE_CFG = "config/sumo/simulation.sumocfg"
 
 
