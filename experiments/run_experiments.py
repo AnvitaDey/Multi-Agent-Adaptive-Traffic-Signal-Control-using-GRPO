@@ -146,7 +146,7 @@ def run_stage_ppo_multiagent(cfg: dict, densities: list, n_runs: int) -> list:
             print(f"  [ppo_multiagent | {density} | run {run+1}/{n_runs}]", end=" ", flush=True)
 
             env      = MultiTrafficEnv(sumo_cfg=sumo_cfg, tls_ids=tls_ids,
-                                       max_steps=cfg["episode"]["max_decision_steps"])
+                                       max_steps=2000)
             obs_dict = env.reset()
             done            = False
             all_queues      = []
