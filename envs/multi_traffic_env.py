@@ -38,6 +38,7 @@ class MultiTrafficEnv:
 
         # Track per-episode arrived count per decision step
         self._prev_arrived = 0
+        
 
         self._obs_dims = self._probe_obs_dims(self._cfg_list[0])
 
@@ -103,6 +104,7 @@ class MultiTrafficEnv:
         self._sumo_running = True
         self._step_count   = 0
         self._prev_arrived = 0   # reset throughput counter
+        self._total_arrived = 0 
 
         for tls in self.tls_ids:
             self._lanes[tls]        = self._lanes_probe[tls]
