@@ -149,6 +149,7 @@ class MultiTrafficEnv:
         total_arrived    = traci.simulation.getArrivedNumber()
         step_arrived     = max(0, total_arrived - self._prev_arrived)
         self._prev_arrived = total_arrived
+        self._total_arrived += step_arrived 
 
         global_teleports = traci.simulation.getStartingTeleportNumber()
 
@@ -185,6 +186,7 @@ class MultiTrafficEnv:
             tls: {
                 **metrics_after[tls],
                 "arrived":   step_arrived,
+                "total_arrived": self._total_arrived,
                 "teleports": global_teleports,
             }
             for tls in self.tls_ids
