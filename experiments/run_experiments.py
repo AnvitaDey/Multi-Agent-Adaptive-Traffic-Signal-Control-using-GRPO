@@ -163,14 +163,15 @@ def run_stage_ppo_multiagent(cfg: dict, densities: list, n_runs: int) -> list:
 
                 obs_dict, _, done_dict, info_dict = env.step(action_dict)
                 done = done_dict["__all__"]
+                last_info = info_dict
 
                 step_q = [info_dict[tls]["queue"] for tls in tls_ids]
                 step_w = [info_dict[tls]["wait"]  for tls in tls_ids]
                 all_queues.append(float(np.mean(step_q)))
                 all_waits.append(float(np.mean(step_w)))
-                total_arrived   += info_dict[tls_ids[0]]["arrived"]
-                total_teleports += info_dict[tls_ids[0]]["teleports"]
                 peak_queue       = max(peak_queue, max(step_q))
+            total_arrived   = last_info[tls_ids[0]]["total_arrived"]
+            total_teleports = last_info[tls_ids[0]]["teleports"]    
 
             env.close()
 
