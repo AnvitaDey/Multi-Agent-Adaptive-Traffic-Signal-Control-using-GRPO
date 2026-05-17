@@ -115,3 +115,5 @@ Fixed-time  moderate  1.95     21.6s  baseline
 PPO         moderate  1.73     27.4s  queue -11% ✅
 Fixed-time  heavy     24.773   33s    baseline
 PPO         heavy     7.27     141s   queue -71%, wait -58% ✅✅
+
+letting grpo train at 6k, then will change certain parameters like entropy_end etc because the results are very similar almost same as ppo 
