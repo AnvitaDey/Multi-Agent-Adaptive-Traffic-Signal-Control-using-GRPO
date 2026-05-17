@@ -52,3 +52,66 @@ Next after PPO converges:
 Apply the same reward fixes to your GRPO training (same env, so env fix covers both)
 Run evaluation comparing PPO vs GRPO on same test scenarios
 That comparison is your final result
+
+CHANGES:
+
+trained ppo after multiple change of parameters, reward was mainly same, cahnged max step for ppo to 2000, changed max descition steps from 2k to 500
+ for reduction of time, changed total_ts to 500000 from 1M 
+ min_gree_steps from 15 to 10 because agents couldn't switch phases responsively enough, causing unnecessary queuing.
+ removed global_reward = Originally -0.2 * global_queue was added to every agent's reward. With 9 intersections each having multiple lanes, global_queue 
+ could reach 50-200 vehicles, making global_reward = -10 to -40 per step. This completely swamped the local reward signal (which was only ±1 to ±2), making it 
+ impossible for agents to learn anything meaningful.
+
+ throughput_bonus bug: Fixed. Originally after.get("arrived", 0) was called on _snap_local() output which only contained queue and wait — so arrived was always 0. 
+ Added _prev_arrived tracking and step_arrived = total_arrived - self._prev_arrived to correctly compute vehicles arriving each decision step.
+
+switch_penalty: 0.2 → 0.1. Original penalty was too harsh, suppressing all phase switching behaviour and causing agents to just hold one phase indefinitely.
+
+added total_arrived needed for evaluation 
+
+PPO TRAINING:
+-ent_coef: 0.005 → 0.05 Low entropy coefficient means the policy becomes near-deterministic very early, agent exploring and gets stuck
+-learning rate = 1e-4 to 3e-4 faster rise, more stable final policy, for convergence 
+-n_steps: 2048 → 4096 for more stable advantage estimates, back to 2046,  because trianing became slow 
+-batch_size 64 to 256 reduced noice since thereis a lot of switching and different traffic scenerios
+--net_arch: [256, 128] → [256, 256]
+-max_decision_steps from 2k to 500 to 1k, 2k was too long, 500 gave no meaningful results, 1k is GOOD
+-total_ts: 1,000,000 → 500,000. savedd 9 hrs of training
+-ckpt_every: 200,000 → 100,000, less work lost iss training crashes 
+
+--CSVLoggerCallback: Added so training can be monitored without tensorboard 
+--Added os.makedirs(agent_tb_dir, exist_ok=True) before agent.learn() because manual deletion of logs in tensorboard caused crashing as it was calling out the 
+directories that didnt exist, now it makes a new n=one so no crashes 
+episode info["episode"] fix: Added. SB3's Monitor wrapper requires the info dict to contain {"episode": {"r": total_reward, "l": episode_length}} when done=True. 
+Without this, ep_rew_mean in tensorboard shows 0 for the entire training run — graphs appear flat even when the agent is learning.
+
+GRPO AGENT:
+
+architecture:- 
+LayerNorm(obs_dim) → Linear(obs_dim, 256) → ReLU
+→ Linear(256, 256) → ReLU → Linear(256, hidden) → ReLU
+→ Linear(hidden, num_actions)
+
+gain=0.01 ensures near-uniform policy at start — agent doesn't immediately commit to one action.
+TrafficValueNet: Same structure but outputs scalar V(s) for heavy traffic for returns vary widely between episodes 
+ step_returns = (step_returns - ret_mean) / ret_std = stabalizes return 
+num_episodes  = 6000
+lr            = 3e-4      # same as PPO start
+lr_min        = 1e-5      # cosine decay floor
+gamma         = 0.99
+clip_eps      = 0.2       # same as PPO
+entropy_start = 0.05
+entropy_end   = 0.005
+n_epochs      = 6         # fewer than PPO's 10 — GRPO updates are denser
+ckpt_every    = 100
+
+RESULTS: (PPO vs FIXED)
+
+controller  density   queue    wait   status
+
+Fixed-time  light     0.53     5.8s   baseline
+PPO         light     0.47     7.3s   queue -11% ✅
+Fixed-time  moderate  1.95     21.6s  baseline
+PPO         moderate  1.73     27.4s  queue -11% ✅
+Fixed-time  heavy     24.773   33s    baseline
+PPO         heavy     7.27     141s   queue -71%, wait -58% ✅✅
