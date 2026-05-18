@@ -31,10 +31,12 @@ class TrafficPolicyNet(nn.Module):
         super().__init__()
         self.net = nn.Sequential(
             nn.LayerNorm(obs_dim),
-            nn.Linear(obs_dim, 256),
+            nn.Linear(obs_dim, 256), #edit
             nn.ReLU(),
+            nn.Dropout(0.1),  # added experimental dropout for better generalization
             nn.Linear(256, 256),
             nn.ReLU(),
+            nn.Dropout(0.1), # added experimental dropout for better generalization
             nn.Linear(256, hidden),
             nn.ReLU(),
             nn.Linear(hidden, num_actions),
