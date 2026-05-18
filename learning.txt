@@ -118,7 +118,7 @@ PPO         heavy     7.27     141s   queue -71%, wait -58% ✅✅
 
 letting grpo train at 6k, then will change certain parameters like entropy_end etc because the results are very similar almost same as ppo  
 
-
+FINAL RESULT:
 Controller      Density      AvgQueue   AvgWait(s)   Throughput  Teleports
 --------------------------------------------------------------------------
 fixed_time      light            0.53         5.83         1309          0
@@ -142,9 +142,38 @@ heavy ppo- 70.6 %, 57.6%
 need to change the policy because grpo is very similar to ppo 
 
 changes:
-grpo trianing:-
+  grpo trianing:-
 num_episodes  = 8000    # more training time
 n_epochs      = 10      # was 6 — more gradient steps per episode
 entropy_end   = 0.02    # was 0.005 — keep exploration alive
 lr_min        = 5e-5    # was 1e-5 — don't let LR die
+  grpo agent:- 
+self.net = nn.Sequential(
+    blah blah 
+    nn.Dropout(0.1),        # ADD — forces exploration through network
+    nn.Dropout(0.1),        # ADD
+    blah blah)
+env: 
+throughput 0.3 to 0.4 
 
+graph: 
+
++bad graph= high → immediate flatline near 0 :
+policy became deterministic too early
+exploration died
+GRPO becomes PPO-like local optimum
++good= slow gradual decay
+sustained exploration
+better policy diversity
+more adaptive behavior
+
+Episode reward graph
+You want:
+upward trend
+smoother convergence
+fewer violent oscillations  =  steady improvement then plateau
+
+episode reward: not spiking, spinking is bad
+value loss, critic loss= good- steady improvement then plateau, bad- huge exploding oscillations
+throughput graph
+queue/waiting graphs= gradual decrease 
