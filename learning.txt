@@ -116,4 +116,27 @@ PPO         moderate  1.73     27.4s  queue -11% ✅
 Fixed-time  heavy     24.773   33s    baseline
 PPO         heavy     7.27     141s   queue -71%, wait -58% ✅✅
 
-letting grpo train at 6k, then will change certain parameters like entropy_end etc because the results are very similar almost same as ppo 
+letting grpo train at 6k, then will change certain parameters like entropy_end etc because the results are very similar almost same as ppo  
+
+
+Controller      Density      AvgQueue   AvgWait(s)   Throughput  Teleports
+--------------------------------------------------------------------------
+fixed_time      light            0.53         5.83         1309          0
+fixed_time      moderate         1.95        21.57         4044          0
+fixed_time      heavy           24.77       333.18        12000          0
+ppo_multiagent  light            0.47         7.28           72          0
+ppo_multiagent  moderate         1.73        27.37          188          0
+ppo_multiagent  heavy            7.27       141.10          417          0
+grpo            light            0.47         7.28           72          0
+grpo            moderate         1.73        27.37          188          0
+grpo            heavy            7.39       143.00          436          0
+Comparison results saved → results/comparison.csv
+
+light grpo- 11.4% 
+moderate grpo- 11.3%
+heavy grpo- 70.2%, 57.1%
+
+light ppo - 11.4%
+moderate ppo- 11.3 %
+heavy ppo- 70.6 %, 57.6%
+need to change the policy because grpo is very similar to ppo 
