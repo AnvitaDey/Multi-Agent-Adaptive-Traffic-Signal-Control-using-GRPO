@@ -107,14 +107,14 @@ def main():
     max_steps  = cfg["episode"]["max_decision_steps"]
 
     # ── Hyperparameters ────────────────────────────────────────────
-    num_episodes  = 6000
+    num_episodes  = 8000 # 6k to 8k 
     lr            = 3e-4
-    lr_min        = 1e-5
+    lr_min        = 5e-5 #1e-5 before 
     gamma         = 0.99
     clip_eps      = 0.2
     entropy_start = 0.05
-    entropy_end   = 0.005
-    n_epochs      = 6
+    entropy_end   = 0.02 #0.005 to 0.02 
+    n_epochs      = 10 # 6 to 10
     ckpt_every    = 100
     log_dir       = "results/grpo_mixed"
 
