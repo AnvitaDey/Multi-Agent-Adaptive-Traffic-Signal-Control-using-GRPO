@@ -28,6 +28,7 @@ from tqdm import tqdm
 from envs.multi_traffic_env import MultiTrafficEnv
 from agents.grpo_agent import TrafficPolicyNet, TrafficValueNet, AgentRollout, GRPOUpdater
 from utils.sumo_utils import patch_sumocfg_routes
+from torch.utils.tensorboard import SummaryWriter 
 
 
 def load_config(path="config/experiment_config.yaml"):
@@ -193,6 +194,7 @@ def main():
                 "mean_queue", "mean_wait", "throughput",
                 "mean_loss", "mean_vf_loss", "entropy_coef", "lr"
             ])
+    tb_writer = SummaryWriter(log_dir=os.path.join(log_dir, "tb"))        
 
     print(f"\n  Starting from episode {start_ep}...\n")
 
@@ -201,7 +203,7 @@ def main():
     # so the bar never gets broken or pushed around.
     pbar = tqdm(range(start_ep, num_episodes), desc="GRPO",
                 unit="ep", colour="green", dynamic_ncols=True)
-
+    
     for ep in pbar:
 
         # ── Anneal entropy and read current LR ────────────────────
@@ -247,6 +249,27 @@ def main():
         group_std   = float(np.std(stats["group_returns"]))
         mean_queue  = float(np.mean(ep_queues)) if ep_queues else 0.0
         mean_wait   = float(np.mean(ep_waits))  if ep_waits  else 0.0
+
+#tensor board logging
+
+        tb_writer.add_scalar("Traffic/MeanQueue", mean_queue, ep)
+
+        tb_writer.add_scalar("Traffic/MeanWait", mean_wait, ep)
+
+        tb_writer.add_scalar("Traffic/Throughput", ep_throughput, ep)
+
+        tb_writer.add_scalar("Returns/MeanReturn", mean_return, ep)
+
+        tb_writer.add_scalar("Returns/GroupStd", group_std, ep)
+
+        tb_writer.add_scalar("Loss/PolicyLoss", stats["mean_loss"], ep)
+
+        tb_writer.add_scalar("Loss/ValueLoss", stats["mean_vf_loss"], ep)
+
+        tb_writer.add_scalar("Policy/EntropyCoef", entropy_coef, ep)
+
+        tb_writer.add_scalar("Training/LearningRate", current_lr, ep)
+
 
         # ── Step LR schedulers ─────────────────────────────────────
         for tls in tls_list:
@@ -298,7 +321,7 @@ def main():
             tqdm.write(f"  --> Checkpoint saved: {ckpt_dir}/checkpoint.pt")
 
     pbar.close()
-
+    tb_writer.close()
     # ── Final save ─────────────────────────────────────────────────
     final_dir = os.path.join(log_dir, "final")
     os.makedirs(final_dir, exist_ok=True)
