@@ -207,7 +207,7 @@ class MultiTrafficEnv:
            weight -0.3  → contribution roughly [-1.5, +1.5]
 
         3. throughput   : vehicles arrived this step, normalised by 10
-           weight +0.3  → contribution [0, ~1.5] (rarely >5 per step)
+           weight +0.4  → contribution [0, ~1.5] (rarely >5 per step) #changed 0.3 to 0.4 to encourage throughput more 
 
         4. teleport_pen : stuck vehicles being teleported — bad
            weight -1.0  → rare but significant penalty
