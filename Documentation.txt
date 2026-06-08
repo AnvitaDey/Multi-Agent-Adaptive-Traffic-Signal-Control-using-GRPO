@@ -141,7 +141,7 @@ moderate ppo- 11.3 %
 heavy ppo- 70.6 %, 57.6%
 need to change the policy because grpo is very similar to ppo 
 
-changes:
+changesX:
   grpo trianing:-
 num_episodes  = 8000    # more training time
 n_epochs      = 10      # was 6 — more gradient steps per episode
@@ -177,3 +177,6 @@ episode reward: not spiking, spinking is bad
 value loss, critic loss= good- steady improvement then plateau, bad- huge exploding oscillations
 throughput graph
 queue/waiting graphs= gradual decrease 
+
+need to change the policy since hyperparameters isnt working as expected 
+wil see after this training since changesx was applied 
