@@ -188,3 +188,12 @@ rerunning for comparision
 grpo and ppo v1 are almost similar, changed stuff in grpo and reevaluating and comparing with old ppo to see the difference 
 use grpo_mixed and ppo_multiagent_v1, comparison_v1 is ppo and grpo having almost same results, comparison_v2 is no ppo just grpo and fixed because of
 no ppo error, after fixing, using comparision.csv
+
+the results are out finally, GRPO is better than PPO by :-
+
+*Light traffic* : avg queue length reduction- *2.13%*
+                      avg wait time reduction- *2.88%*
+*Moderate traffic:* avg queue length reduction- *2.31%*
+                             avg wait time reduction- *3.80%*
+*Heavy traffic* : avg queue length reduction- *5.09%*
+                        avg wait time reduction- *1.13%*
