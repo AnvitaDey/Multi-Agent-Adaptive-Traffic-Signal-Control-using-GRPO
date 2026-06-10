@@ -119,7 +119,7 @@ def run_stage_ppo_multiagent(cfg: dict, densities: list, n_runs: int) -> list:
         return []
 
     tls_ids   = cfg["sumo"]["tls_ids"]
-    final_dir = "results/ppo_multiagent/final"
+    final_dir = "results/ppo_multiagent_v1/final" #changed from "results/ppo_multiagent/final" to "results/ppo_multiagent_v1/final" to avoid confusion with old PPO multiagent results
 
     if not os.path.exists(final_dir):
         print(f"  [SKIP] No PPO multiagent models found at {final_dir}")

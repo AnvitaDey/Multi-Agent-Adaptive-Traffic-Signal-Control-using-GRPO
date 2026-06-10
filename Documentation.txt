@@ -179,4 +179,12 @@ throughput graph
 queue/waiting graphs= gradual decrease 
 
 need to change the policy since hyperparameters isnt working as expected 
-wil see after this training since changesx was applied 
+will see after this training since changesx was applied 
+
+#changed from "results/ppo_multiagent/final" to "results/ppo_multiagent_v1/final" to avoid confusion with old PPO multiagent results
+in run_experiments.py 
+rerunning for comparision
+
+grpo and ppo v1 are almost similar, changed stuff in grpo and reevaluating and comparing with old ppo to see the difference 
+use grpo_mixed and ppo_multiagent_v1, comparison_v1 is ppo and grpo having almost same results, comparison_v2 is no ppo just grpo and fixed because of
+no ppo error, after fixing, using comparision.csv
