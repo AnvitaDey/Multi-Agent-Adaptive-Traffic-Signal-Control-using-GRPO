@@ -1,5 +1,13 @@
 """
-envs/multi_traffic_env.py  (v4 — fixed reward, fixed throughput)
+envs/multi_traffic_env.py  (v5 — fixed throughput accumulation)
+
+FIX: getArrivedNumber() returns arrivals for the LAST sim step only,
+not a cumulative total. Previous code called it once after the 10-step
+loop and treated the result as cumulative (with _prev_arrived subtraction),
+which caused massive undercounting (e.g. PPO showing 417 vs fixed-time 12000).
+
+Fix: accumulate getArrivedNumber() inside the loop across all 10 steps.
+_prev_arrived is no longer needed and has been removed.
 """
 
 import uuid
@@ -8,7 +16,7 @@ import traci
 import numpy as np
 
 
-MIN_GREEN_STEPS    = 10   # was 15 — allow more frequent switching
+MIN_GREEN_STEPS    = 10
 YELLOW_STEPS       = 2
 STEPS_PER_DECISION = 10
 
@@ -35,10 +43,7 @@ class MultiTrafficEnv:
         self._yellow_timer = {}
         self._step_count   = 0
         self._sumo_running = False
-
-        # Track per-episode arrived count per decision step
-        self._prev_arrived = 0
-        
+        self._total_arrived = 0
 
         self._obs_dims = self._probe_obs_dims(self._cfg_list[0])
 
@@ -68,7 +73,6 @@ class MultiTrafficEnv:
 
             lanes_cache[tls] = lanes
             phase_cache[tls] = n_ph
-            # obs = queue per lane + wait per lane + phase one-hot
             dims[tls]        = len(lanes) * 2 + n_ph
 
         traci.switch(probe_label)
@@ -101,10 +105,9 @@ class MultiTrafficEnv:
                      "--time-to-teleport", "300"], label=self._label)
 
         traci.switch(self._label)
-        self._sumo_running = True
-        self._step_count   = 0
-        self._prev_arrived = 0   # reset throughput counter
-        self._total_arrived = 0 
+        self._sumo_running  = True
+        self._step_count    = 0
+        self._total_arrived = 0
 
         for tls in self.tls_ids:
             self._lanes[tls]        = self._lanes_probe[tls]
@@ -134,22 +137,22 @@ class MultiTrafficEnv:
             tls: self._snap_local(tls) for tls in self.tls_ids
         }
 
-        # Run simulation
+        # Run simulation — accumulate arrivals across ALL 10 steps
+        # getArrivedNumber() returns arrivals for the last step only,
+        # so it must be summed inside the loop, not read once after.
+        step_arrived = 0
         for _ in range(STEPS_PER_DECISION):
             traci.simulationStep()
+            step_arrived += traci.simulation.getArrivedNumber()
             for tls in self.tls_ids:
                 self._tick_yellow(tls)
+
+        self._total_arrived += step_arrived
 
         # Snapshot AFTER sim steps
         metrics_after = {
             tls: self._snap_local(tls) for tls in self.tls_ids
         }
-
-        # Throughput: vehicles that completed trips THIS decision step
-        total_arrived    = traci.simulation.getArrivedNumber()
-        step_arrived     = max(0, total_arrived - self._prev_arrived)
-        self._prev_arrived = total_arrived
-        self._total_arrived += step_arrived 
 
         global_teleports = traci.simulation.getStartingTeleportNumber()
 
@@ -159,14 +162,14 @@ class MultiTrafficEnv:
             if not self._in_yellow[tls]:
                 self._phase_timer[tls] += 1
 
-        # Build rewards — pure local, no catastrophic global term
+        # Build rewards
         rewards = {}
         for tls in self.tls_ids:
             rewards[tls] = self._local_reward(
                 metrics_before[tls],
                 metrics_after[tls],
                 action_dict[tls],
-                step_arrived          # ← now correctly passed in
+                step_arrived
             )
 
         # Done
@@ -185,9 +188,9 @@ class MultiTrafficEnv:
         infos = {
             tls: {
                 **metrics_after[tls],
-                "arrived":   step_arrived,
+                "arrived":       step_arrived,
                 "total_arrived": self._total_arrived,
-                "teleports": global_teleports,
+                "teleports":     global_teleports,
             }
             for tls in self.tls_ids
         }
@@ -197,34 +200,11 @@ class MultiTrafficEnv:
     # ──────────── REWARD ──────────── #
 
     def _local_reward(self, before, after, action, arrived=0):
-        """
-        Reward components — all bounded to reasonable scale:
-
-        1. delta_queue  : change in halting vehicles  → range roughly [-5, +5]
-           weight -0.5  → contribution [-2.5, +2.5]
-
-        2. delta_wait   : change in cumulative wait, normalised by 200s
-           weight -0.3  → contribution roughly [-1.5, +1.5]
-
-        3. throughput   : vehicles arrived this step, normalised by 10
-           weight +0.4  → contribution [0, ~1.5] (rarely >5 per step) #changed 0.3 to 0.4 to encourage throughput more 
-
-        4. teleport_pen : stuck vehicles being teleported — bad
-           weight -1.0  → rare but significant penalty
-
-        5. switch_pen   : discourage pointless switching
-           fixed  -0.1  → small constant
-
-        Total range: roughly [-6, +4] per step
-        Episode total (1000 steps): roughly [-12000, +8000]
-        """
         delta_queue = after["queue"] - before["queue"]
         delta_wait  = (after["wait"]  - before["wait"]) / 200.0
 
-        # Throughput: normalise by ~10 vehicles/step max expected
         throughput_bonus = arrived / 10.0
-
-        switch_penalty = 0.1 if action == 1 else 0.0
+        switch_penalty   = 0.1 if action == 1 else 0.0
 
         return float(
             -0.5 * delta_queue
