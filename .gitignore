@@ -4,7 +4,12 @@ __pycache__/
 *.pyd
 .env
 venv/
-results/
+results/*
+!results/comparison.csv
+!results/comparison_v1.csv
+!results/grpo_mixed/train_results.csv
+!results/grpo_mixed_v1/train_results.csv
+!results/ppo_multiagent_v1/train_results.csv
 *.zip
 *.pt
 *.log
