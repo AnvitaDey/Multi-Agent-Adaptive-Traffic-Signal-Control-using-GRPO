@@ -1,0 +1,16 @@
+.net.xml
+.sumocfg
+.rou.xml =  Create roads
+            Create intersections
+            Create traffic lights
+            Create vehicle routes
+
+env= sumo to python connect
+state= what should agent observe?
+define action             
+define rewards 
+
+
+9 signalized intersections arranged in a 3×3 grid.
+installed sumo and traCI, installed all dependencies, network.net.xml is for the routes and the traffic grid and all 
+routes= where the traffic spawn, start and go, and simulation.sumo
